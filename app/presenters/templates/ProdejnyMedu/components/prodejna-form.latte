@@ -1,0 +1,61 @@
+<form n:name="prodejnaMeduForm" class="form-horizontal">
+	<fieldset>
+		<legend>Informace o nabídce</legend>
+		<div class="form-group">
+			{label nazev class => 'col-sm-3 control-label' /}
+			<div class="col-sm-9">
+				{input nazev class => 'form-control'}
+			</div>
+		</div>
+		<div class="form-group">
+			{label informace class => 'col-sm-3 control-label' /}
+			<div class="col-sm-9">
+				{input informace class => 'form-control'}
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-offset-3 col-sm-9">
+				<div class="checkbox">
+					{input uverejnitTelefon}
+				</div>
+			</div>
+		</div>
+	</fieldset>
+	<fieldset>
+		<legend>Adresa</legend>
+		<div class="form-group">
+			{label ulice class => 'col-sm-3 control-label' /}
+			<div class="col-sm-9">
+				{input ulice class => 'form-control'}
+			</div>
+		</div>
+		<div class="form-group">
+			{label castObce class => 'col-sm-3 control-label' /}
+			<div class="col-sm-9">
+				{input castObce class => 'form-control'}
+			</div>
+		</div>
+		<div class="form-group">
+			{label psc class => 'col-sm-3 control-label' /}
+			<div class="col-sm-9">
+				{input psc class => 'form-control'}
+			</div>
+		</div>
+		<div class="form-group">
+			<div class="col-sm-12 text-right">
+				<button type="button" class="btn btn-default" id="locate">Najít na mapě</button>
+			</div>
+		</div>
+		<div class="form-group">
+			{label souradnice class => 'col-sm-3 control-label' /}
+			<div class="col-sm-9">
+				{input souradnice class => 'form-control'}
+			</div>
+		</div>
+	</fieldset>
+	<div class="form-group">
+		<div class="col-sm-9 col-sm-offset-3">
+			{input send class => 'btn btn-primary'}
+		</div>
+	</div>
+</form>

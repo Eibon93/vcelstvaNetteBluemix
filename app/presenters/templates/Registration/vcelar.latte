@@ -1,0 +1,159 @@
+{block content}
+
+<h1 n:block="title"><img src="{$basePath}/img/nadpis_h1.png" style="margin-top: -5px;">&nbsp;Registrace včelaře</h1>
+
+
+<div class="row with-margin">
+    <div class="col-md-8 col-md-offset-2">
+
+		{form vcelarRegistrationForm class => 'form-horizontal'}
+
+			{include ../LatteComponents/errors.latte, errors => $form->ownErrors}
+
+			<fieldset>
+				<legend>Typ Registrace</legend>
+				{include ../LatteComponents/radio-inline.latte,control=>$form['pravnickaFyzicka']}
+			</fieldset>
+
+			<fieldset>
+				<legend>Registrační údaje</legend>
+				{include ../LatteComponents/form-group.latte,control=>$form['email']}
+				{include ../LatteComponents/form-group.latte,control=>$form['heslo']}
+				{include ../LatteComponents/form-group.latte,control=>$form['hesloTest']}
+			</fieldset>
+
+			<fieldset>
+				<legend>Údaje o chovateli</legend>
+				{include ../LatteComponents/form-group.latte,control=>$form['registracniCislo']}
+				{include ../LatteComponents/form-group.latte,control=>$form['jmeno']}
+				{include ../LatteComponents/form-group.latte,control=>$form['prijmeni']}
+
+				<div id="rc">
+					{include ../LatteComponents/form-group.latte,control=>$form['rodneCislo']}
+				</div>
+
+				{include ../LatteComponents/form-group.latte,control=>$form['telefon']}
+				{include ../LatteComponents/form-group.latte,control=>$form['wwwStranky']}
+				<p style='text-align: right; margin-top: -10px; color: darkred;'>
+					<small>WWW stránky se zobrazí u Vašich prodejních míst medu v mapě ČR (nepovinný údaj).</small>
+				</p>
+			</fieldset>
+
+			<fieldset id="pravnicka-osoba" style="display:none">
+				<legend>Údaje o včelařském podniku</legend>
+				{include ../LatteComponents/form-group.latte,control=>$form['nazev'], required=>true}
+				{include ../LatteComponents/form-group.latte,control=>$form['ico'], required => true }
+
+
+			</fieldset>
+
+			<fieldset>
+				<legend>Trvalé bydliště nebo sídlo</legend>
+				{include ../LatteComponents/form-group.latte,control=>$form['castObce'] }
+				{include ../LatteComponents/form-group.latte,control=>$form['ulice']}
+				{include ../LatteComponents/form-group.latte,control=>$form['psc'] }
+
+
+
+			</fieldset>
+
+			<fieldset>
+				<legend>Doplňující informace</legend>
+				{include ../LatteComponents/form-group.latte,control=>$form['vcelariOd']}
+
+			</fieldset>
+			<fieldset>
+				<legend>Podmínky použití a zásady ochrany osobních údajů</legend>
+				{include podminky.latte }
+				{include ../LatteComponents/form-group.latte,control=>$form['souhlas']}
+
+			</fieldset>
+			<div class="form-group">
+				<div class="col-sm-9 col-sm-offset-3">
+					{input send class => 'btn btn-primary'}
+				</div>
+			</div>
+
+		{/form}
+    </div>
+</div>
+
+{/block}
+{block scripts}
+
+{include parent}
+<script src="{$basePath}/js/typeahead.bundle.min.js"></script>
+<script src="{$basePath}/js/bootstrap-datepicker.js"></script>
+
+<script>
+
+
+	$(document).ready(function () {
+		var source = new Bloodhound({
+			datumTokenizer: Bloodhound.tokenizers.whitespace,
+			queryTokenizer: Bloodhound.tokenizers.whitespace,
+			remote: {
+				url: $('#frm-vcelarRegistrationForm-obec').attr('data-typeahead-url'),
+				wildcard: '__QUERY_PLACEHOLDER__'
+			}
+		});
+
+		$('#frm-vcelarRegistrationForm-obec').typeahead(null, {
+			name: 'castObce',
+			source: source,
+			templates: {
+				empty: [
+					'<div class="empty-message">',
+					'obec nenalezena',
+					'</div>'
+				].join('\n'),
+				suggestion: function (data) {
+					return '<p><strong>' + data + '</strong> </p>';
+				}
+			}
+		});
+
+	});
+</script>
+
+<script>
+	$(document).ready(function () {
+		var pravnicka = '#frm-vcelarRegistrationForm-pravnickaFyzicka-p';
+		var fyzicka = '#frm-vcelarRegistrationForm-pravnickaFyzicka-f';
+		var ico = '#frm-VcelarRegistrationForm-ico';
+
+		if ($(ico).val() || $(pravnicka).is(':checked')) {
+			$("#pravnicka-osoba").show();
+			$('#rc').hide();
+			$(pravnicka).prop("checked", true);
+		}
+
+
+
+
+		$(fyzicka).click(function (event) {
+
+			if ($(fyzicka).is(':checked')) {
+				$("#pravnicka-osoba").hide(300);
+				$('#rc').show(300);
+			}
+
+		});
+		$(pravnicka).click(function (event) {
+
+			if ($(pravnicka).is(':checked')) {
+				$("#pravnicka-osoba").show(300);
+				$('#rc').hide(300)
+			}
+
+		});
+	});
+</script>
+
+{/block}
+
+{block css}
+
+<link rel="stylesheet" href="{$basePath}/css/datepicker.css">
+
+{/block}

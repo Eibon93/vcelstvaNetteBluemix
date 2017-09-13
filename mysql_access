@@ -1,0 +1,6 @@
+#vcelstva.czu.cz
+DB=vcelstva_czu_cz
+DBU=vcelstva
+USP="EV6B4aLN"
+HOS="193.84.47.%"
+mysql server=10.70.1.44

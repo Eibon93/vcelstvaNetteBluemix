@@ -1,0 +1,21 @@
+<script src="//api.mapy.cz/loader.js"></script>
+<script>Loader.load();</script>
+<script>
+	$(function () {
+		$('#map').createMap()
+				.setEditable({
+					type: 'prodejna',
+					title: 'Místo prodeje medu',
+					lat: $('#lat'),
+					lng: $('#lng'),
+					text: $('#souradnice')
+				})
+				.setSearchable({
+					street: $('#ulice'),
+					town: $('#castObce'),
+					zip: $('#psc'),
+					find: $('#locate')
+				})
+				.show();
+	});
+</script>

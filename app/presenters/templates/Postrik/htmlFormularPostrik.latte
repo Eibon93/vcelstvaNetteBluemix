@@ -1,0 +1,87 @@
+{block content}
+
+<style type="text/css">
+    table {
+	margin-bottom: 40px; 
+	width: 100%;
+    }
+    table.postrik {
+	border: 2px solid black; 
+	border-collapse: collapse;
+    }
+    table.postrik td {
+	font-size: 11px;
+	border-right: 1px solid black;
+	border-bottom: 1px solid black;   
+	padding: 3px 3px 3px 3px;
+    } 
+</style>
+
+{var pocetStran = 1}
+<div n:foreach='$vsechnyPostrikyPodleObci as $obecId => $seznamPostriku'>
+
+    <div{if count($vsechnyPostrikyPodleObci) > ($pocetStran)} style="page-break-after: always"{/if}>
+
+	<div style="margin-left: 400px; margin-top: 30px; margin-bottom: 40px;">
+	    <p>
+		.................................................
+		<br><br>.................................................
+		<br><br>.................................................
+		<br><br>.................................................
+	    </p>
+	</div>
+
+	<h4>Věc: Avízo o aplikaci postřiků</h4>
+
+	    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;V souvislosti s plánovanými aplikacemi přípravků na ochranu rostlin Vás dle § 51 odstavce 2) písmene a) zákona č. 326/2004 o rostlinolékařské péči a o změně některých souvisejících zákonů tímto žádám:</p>
+
+	    <ul>
+		<li>zajištění avíza o postřicích včelařům v okolí, tj. včelařům, kteří mají svá stanoviště včel v okolí postřiků do vzdálenosti 5 km;</li>
+		<li>poskytnutí informací o umístění stanovišť včelstev v katastru vaší obce.</li>
+	    </ul>
+
+	    <p>Informace o umístění včelstev a kontaktní údaje chovatelů včel budou v souladu se zákonem využity pro řádné ohlášení aplikací nebezpečných, nebo zvláště nebezpečných pro včely. Lokace stanovišť spolu s kontaktními údaji chovatelů včel prosím zašlete na výše uvedenou adresu sídla organizace nebo požádejte včelaře o zanesení jejich stanovišť do webové aplikace Včelstva online (vcelstva.czu.cz), kterou zpravuj Česká zemědělská univerzita v Praze.</p>
+
+	    <p>Z naší strany budou provedeny následující aplikace přípravků na ochranu rostlin:</p>
+
+	    <table class="postrik">
+		<tr>
+		    <td><b>Datum a čas</b></td>
+		    <td><b>Plodina</b></td>
+		    <td><b>Vliv na včely</b></td>
+		    <td><b>Číslo parcely</b></td>
+		    <td><b>Katastrální území</b></td>
+		    <td><b>Obec</b></td>
+		</tr>
+
+		{php $tempBezpecny = [1 => 'Bez vlivu',2 => 'Mírně nebezpečný',3 => 'Nebezpečný']}
+
+		<tr n:foreach='$seznamPostriku as $postrik'>
+		    <td> {$postrik->datum|date:'j.n.Y'} v {$postrik->datum|date:'H:i'} </td>
+		    <td> {$postrik->plodina} </td>
+		    <td> {$tempBezpecny[$postrik->nebezpecny]} </td>
+		    <td> {$postrik->parcela->cislo} / {$postrik->parcela->podcislo} </td>
+		    <td> {$postrik->katastralniUzemi->nazev} </td>
+		    <td> {$postrik->katastralniUzemi->obec->nazev} </td>
+		</tr>
+	    </table>
+
+	    <p>V případě potřeby nás můžete kontaktovat na: 
+		{$uzivatel->email}{if strlen($uzivatel->telefon)>5},&nbsp;{$uzivatel->telefon}{/if}{if strlen($uzivatel->wwwStranky)>5},&nbsp;{$uzivatel->wwwStranky}{/if}.
+	    </p>
+
+	    <div style="margin-left: 400px; margin-top: 30px; margin-bottom: 40px;">
+		<p>
+		    {$uzivatel->jmeno}&nbsp;{$uzivatel->prijmeni}
+		    <br>{$postrik->zemedelskyPodnik->nazev}
+		    <br>{$postrik->zemedelskyPodnik->adresa->ulice}
+		    <br>{$postrik->zemedelskyPodnik->adresa->castObce}
+		    <br>{$postrik->zemedelskyPodnik->adresa->psc}
+		</p>
+	    </div>
+
+	    <p>V&nbsp;.....................................&nbsp;&nbsp;Dne:&nbsp;..................................&nbsp;&nbsp;Podpis:&nbsp;.....................................................</p>
+
+	    {php $pocetStran = $pocetStran + 1}
+    </div>
+</div>

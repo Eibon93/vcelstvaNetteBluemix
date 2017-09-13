@@ -1,0 +1,71 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Přesunutí včelstva č. {$vcelstvo->poradoveCislo} <small n:if="$vcelstvo->cisloMatky && $vcelstvo->barvaMatky">(Matka {$vcelstvo->cisloMatky}, {$vcelstvo->barvaMatky})</small></h1>
+
+<div class="row">
+    <div class="col-md-10 col-md-offset-1">
+		{form moveForm class => 'form-horizontal'}
+			<div class="form-group">
+				{label datumPresunu class => 'col-sm-3 control-label' /}
+				<div class="col-sm-9">
+					{input datumPresunu class => 'form-control date'}
+				</div>
+			</div>
+			<div class="form-group" n:if="$maZarizeni">
+				<div class="col-sm-offset-3 col-sm-9">
+					<div class="checkbox">
+						<div class="alert alert-info" n:if="!$maSdilenaZarizeni">
+							K tomuto včelstvu je připojena úlová váha.<br>
+							Přesouváte-li včelstvo <strong>bez váhy</strong>, zrušte zaškrtnutí následujícího políčka.
+						</div>
+						<div class="alert alert-warning" n:if="$maSdilenaZarizeni">
+							K tomuto včelstvu je připojena úlová váha, která ale měří i údaje z jiných včelstev.<br>
+							Pokud přesouváte včelstvo i s váhou, zaškrtněte následující políčko a propojení s ostatními včelstvy bude zrušeno.
+						</div>
+						{input vcetneZarizeni}
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+				{label stanovisteId class => 'col-sm-3 control-label' /}
+				<div class="col-sm-9">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Stanoviště</th>
+								<th class="text-right">Datum registrace</th>
+								<th class="text-right">Počet včelstev</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr n:foreach="$stanoviste as $s">
+								<td>
+									<div class="radio">
+										{label stanovisteId:$s->id}
+											{input stanovisteId:$s->id}
+											<strong>{$s->nazev}</strong>
+											<small>(reg.č. {$s->registracniCislo})</small>
+											<br>
+											{$s->katastralniUzemi->obec->nazev}{if $s->katastralniUzemi->nazev !== $s->katastralniUzemi->obec->nazev}, {$s->katastralniUzemi->nazev}{/if}
+										{/label}
+									</div>
+								</td>
+								<td class="text-right">
+									{$s->pocatek|date:'j.n.Y'}
+								</td>
+								<td class="text-right">
+									{$s->aktualniVcelstva->countStored()}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+			<div class="form-group">
+				<div class="col-sm-offset-3 col-sm-9">
+					{input send class => 'btn btn-success'}
+				</div>
+			</div>
+		{/form}
+	</div>
+</div>

@@ -1,0 +1,74 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Úlová karta: {if $vcelstvo->jeReferencni}Referenční včelstvo{else}Včelstvo{/if} č. {$vcelstvo->poradoveCislo}</h1>
+
+{include components/detail.latte}
+
+<hr>
+
+<ul class="nav nav-tabs nav-justified">
+	<li role="presentation" class="active"><a href="#">Kontroly</a></li>
+	<li role="presentation"><a n:href="mereni, $vcelstvo->id">Data z úlové váhy</a></li>
+</ul>
+
+{var $barvaHodnoceni = [0 => '' ,1 => ' label-success', 2 => ' label-info', 3 => ' label-default', 4 => ' label-warning', 5 => ' label-danger']}
+{if count($kontroly)}
+    <div class="row">
+		<div class="col-sm-10 col-md-offset-1">
+			<h2>Kontroly včelstva a úlu</h2>
+			<table class="table">
+				<tbody n:foreach="$kontroly as $i => $k" n:class="$i >= 3 ? switch, $i >= 3 ? hidden">
+					<tr>
+						<th colspan="3"><br>Kontrola ze dne {$k->datumKontroly |date:'%d.%m.%Y'}</th>
+					</tr>
+					<tr>
+						<td rowspan="3">
+							<div n:if="$user->isAllowed($vcelstvo, 'edit')">
+								<a n:href="Kontroly:edit, $k->id" class="glyphicon glyphicon-pencil" style="padding-top: 6px;" title="Upravit záznam o kontrole"></a>
+								<br>
+								<a n:href="Kontroly:delete, $k->id" onclick="return confirm('Opravdu chcete smazat záznam o kontrole ze dne {$k->datumKontroly |date:'%d.%m.%Y'}?');" class="glyphicon glyphicon-trash" style="padding-top: 14px;" title="Odstranit záznam o kontrole"></a>
+							</div>
+						</td>
+						<td>
+							<b>Počet nástavků:</b>&nbsp;&nbsp;<i>{if $k->pocetNastavku} {$k->pocetNastavku} {else} -- {/if}</i>&nbsp;&nbsp;
+							<b>Matka klade:</b>&nbsp;&nbsp;<i>{if $k->matkaKlade}Ano{else}Ne{/if}</i>&nbsp;&nbsp;
+							<b>Obsedají uliček:</b>&nbsp;&nbsp;<i>{if $k->obsedajiUlicek} {$k->obsedajiUlicek} {else} -- {/if}</i>&nbsp;&nbsp;
+							<b>||</b>&nbsp;&nbsp;
+							{if (!(($k->mirnost)+($k->sezeni)+($k->rojivost)+($k->rozvoj)+($k->hygiena)))}<i>Včely neohodnoceny</i>{/if}
+							{if $k->mirnost}<span class="label{$barvaHodnoceni[$k->mirnost]}">Mírnost: <b>{$k->mirnost}</b>&nbsp;&nbsp;</span>{/if}
+							{if $k->sezeni}<span class="label{$barvaHodnoceni[$k->sezeni]}">Sezení: <b>{$k->sezeni}</b>&nbsp;&nbsp;</span>{/if}
+							{if $k->rojivost}<span class="label{$barvaHodnoceni[$k->rojivost]}">Rojivost: <b>{$k->rojivost}</b>&nbsp;&nbsp;</span>{/if}
+							{if $k->rozvoj}<span class="label{$barvaHodnoceni[$k->rozvoj]}">Rozvoj: <b>{$k->rozvoj}</b>&nbsp;&nbsp;</span>{/if}
+							{if $k->hygiena}<span class="label{$barvaHodnoceni[$k->hygiena]}">Hygiena: <b>{$k->hygiena}</b>&nbsp;&nbsp;</span>{/if}
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<b>Plod:</b>&nbsp;&nbsp;<i>{if $k->plod} {$k->plod} {else} -- {/if}</i>&nbsp;&nbsp;
+							<b>Zásoby:</b>&nbsp;&nbsp;<i>{if $k->zasoby} {$k->zasoby} {else} -- {/if}</i>&nbsp;&nbsp;
+							<b>Pyl:</b>&nbsp;&nbsp;<i>{if $k->pyl} {$k->pyl} {else} -- {/if}</i>&nbsp;&nbsp;
+							{if strlen($k->poznamka)>0}<b>Poznámka:</b>&nbsp;&nbsp;<i>{$k->poznamka}</i>&nbsp;&nbsp;{/if}
+						</td>
+					</tr>
+					<tr>
+						<td colspan="2">
+							<b>Medný výnos:</b>&nbsp;&nbsp;<i>{if $k->mednyVynos} {$k->mednyVynos} {else} -- {/if}</i>&nbsp;&nbsp;
+							<b>Příště:</b>&nbsp;&nbsp;<i>{if strlen($k->priste)>0} {$k->priste} {else} nevyplněno {/if}</i>&nbsp;&nbsp;
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<div class="toolbar" n:if="count($kontroly) >= 3">
+				<button class="btn btn-default" data-switch=".switch" data-show="Zobrazit starší kontroly" data-hide="Skrýt starší kontroly">Zobrazit starší kontroly</button>
+			</div>
+		</div>
+    </div>
+{else}
+    <div class="row">
+		<div class="col-sm-10 col-md-offset-1">
+			<div class="alert-container">
+				<div class="alert alert-info">U včelstva zatím nebyla provedena žádná kontrola.</div>
+			</div>
+		</div>
+	</div>
+{/if}

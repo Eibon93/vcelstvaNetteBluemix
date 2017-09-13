@@ -1,0 +1,67 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Postřiky ohrožující včelstva</h1>
+
+{if count($postriky) > 0}
+	<table class="table">
+		<thead>
+			<tr>
+				<th>Postřik</th>
+				<th>Počet ohrožených stanovišť</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr n:foreach="$postriky as $p">
+				<td>
+					<h4>
+						{$p->datum|date:'j.n.Y'} v {$p->datum|date:'H:i'}
+						{include badge-nebezpecny p => $p}
+					</h4>
+					<dl class="dl dl-horizontal">
+						<dt>Plodina:</dt>
+						<dd>{$p->plodina}
+							{include badge-kvetouci p => $p}
+							{include badge-mimo-letovou-aktivitu p => $p}
+						</dd>
+						<dt>Lokalita:</dt>
+						<dd>
+							{$p->katastralniUzemi->obec->nazev},
+							{$p->katastralniUzemi->nazev}
+						</dd>
+					</dl>
+				</td>
+				<td><strong>{count($vysledky[$p->id])}</strong></td>
+			</tr>
+		</tbody>
+	</table>
+
+	{control emailForm}
+{else}
+	<div class="alert alert-success">V současném okamžiku nejsou v dosahu plánovaných postřiků žádná stanoviště se včelami.</div>
+{/if}
+
+{/block}
+
+{block badge-nebezpecny}
+{if $p->nebezpecny === 1}
+	<span class="badge postrik-bezpecny">Bezpečný</span>
+{elseif $p->nebezpecny === 2}
+	<span class="badge postrik-nebezpecny">Nebezpečný</span>
+{else}
+	<span class="badge postrik-zvlast-nebezpecny">Zvlášť nebezpečný</span>
+{/if}
+{/block}
+
+{block badge-kvetouci}
+{if ($p->kvetouci)}
+	<span class="badge postrik-kvetouci">Kvetoucí</span>
+{else}
+	<span class="badge postrik-nekvetouci">Nekvetoucí</span>
+{/if}
+{/block}
+
+{block badge-mimo-letovou-aktivitu}
+{if ($p->mimoLetovouAktivitu)}
+	<span class="badge postrik-mimo-letovou-aktivitu">Mimo letovou aktivitu</span>
+{/if}
+{/block}

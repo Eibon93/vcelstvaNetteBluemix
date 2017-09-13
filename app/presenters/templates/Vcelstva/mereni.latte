@@ -1,0 +1,248 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Úlová karta: {if $vcelstvo->jeReferencni}Referenční včelstvo{else}Včelstvo{/if} č. {$vcelstvo->poradoveCislo}</h1>
+
+{include components/detail.latte}
+
+<hr>
+
+<ul class="nav nav-tabs nav-justified">
+	<li role="presentation"><a n:href="detail, $vcelstvo->id">Kontroly</a></li>
+	<li role="presentation" class="active"><a href="#">Data z úlové váhy</a></li>
+</ul>
+
+<div class="form-inline-container">
+	<form class="form-inline">
+		<div class="form-group">
+			<label for="pocatek">Počátek období</label>
+			<input type="date" class="form-control date" id="pocatek" value="{$pocatek|date:'Y-m-d'}">
+		</div>
+		<div class="form-group">
+			<label for="konec">Konec období</label>
+			<input type="date" class="form-control date" id="konec" value="{$konec|date:'Y-m-d'}">
+		</div>
+		<button type="button" class="btn btn-default" id="refresh">Aktualizovat grafy</button>
+	</form>
+</div>
+
+<div id="chart-list" class="chart-list">
+</div>
+<div id="empty-list" class="alert-container">
+	<div class="alert alert-info">
+		{if $vcelstvo->aktualniPripojeni->countStored()}
+			Ve zvoleném období nejsou k dispozici žádná naměřená data.
+		{else}
+			<p class="text-center">Ke včelstvu není přiřazena žádná vlastní úlová váha ani senzor.</p>
+			<p class="text-center" n:if="$user->isAllowed($vcelstvo, 'edit')"><a n:href="Zarizeni:" class="btn btn-large btn-primary">Připojit úlovou váhu</a></p>
+		{/if}
+	</div>
+</div>
+
+<div id="spinner" class="modal fade" tabindex="-1" role="dialog" data-backdrop="static" data-keyboard="false">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<p class="text-info"><img src="{$basePath}/img/ajax-loader.gif" alt=""> Načítám data, prosím čekejte&hellip;</p>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="error-dialog" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<h4 class="modal-title">Chyba</h4>
+			</div>
+			<div class="modal-body">
+				<p id="error-message" class="text-danger"></p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+{/block}
+
+{block scripts}
+{include parent}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.6.0/Chart.bundle.min.js"></script>
+<script>
+	$(function () {
+		var inputPocatek = $('#pocatek');
+		var inputKonec = $('#konec');
+
+		var chartList = {};
+
+		var showSpinner = function () {
+			$('#spinner').modal('show');
+		};
+
+		var hideSpinner = function () {
+			$('#spinner').modal('hide');
+		};
+
+		var showError = function (message) {
+			$('#error-message').text(message);
+			$('#error-dialog').modal('show');
+		};
+
+		var deleteCharts = function (data) {
+			for (var id in chartList) {
+				if (chartList.hasOwnProperty(id) && !data.hasOwnProperty(id)) {
+					deleteChart(id);
+				}
+			}
+		};
+
+		var deleteChart = function (id) {
+			var chartItem = chartList[id];
+			if ('undefined' !== typeof chartItem.chart) {
+				chartItem.chart.destroy();
+				delete chartItem.chart;
+			}
+			if ('undefined' !== typeof chartItem.canvas) {
+				$(chartItem.canvas).remove();
+				delete chartItem.canvas;
+			}
+			if ('undefined' !== typeof chartItem.container) {
+				$(chartItem.container).remove();
+				delete chartItem.container;
+			}
+			delete chartList[id];
+		};
+
+		var updateCharts = function (data) {
+			var chartCount = 0;
+			for (var id in data) {
+				if (data.hasOwnProperty(id)) {
+					updateChart(id, data[id]);
+					++chartCount;
+				}
+			}
+			if (chartCount > 0) {
+				$('#empty-list').hide();
+				$('#chart-list').show();
+			} else {
+				$('#chart-list').hide();
+				$('#empty-list').show();
+			}
+		};
+
+		var updateChart = function (id, velicina) {
+			if ('undefined' === typeof chartList[id]) {
+				chartList[id] = {};
+			}
+
+			var chartItem = chartList[id];
+
+			if ('undefined' !== typeof chartItem.chart) {
+				chartItem.chart.destroy();
+				delete chartItem.chart;
+			}
+
+			if ('undefined' === typeof chartItem.container) {
+				$('#chart-list').append(function () {
+					return $('<div>')
+							.attr('class', 'chart-container')
+							.attr('id', 'chart-container-' + id)
+							.append(function () {
+								return $('<h3>')
+										.attr('class', 'chart-title')
+										.text(velicina.velicina + ' [' + velicina.jednotka + ']');
+							})
+							.append(function () {
+								return $('<div>')
+										.attr('class', 'chart-canvas')
+										.append(function () {
+											return $('<canvas>')
+													.attr('id', 'chart-' + id);
+										});
+							});
+				});
+
+				chartItem.container = $('#chart-container-' + id).get(0);
+				chartItem.canvas = $('#chart-' + id).get(0);
+			}
+
+			chartItem.chart = createChart(chartItem.canvas.getContext('2d'), velicina.senzory);
+		};
+
+		var createChart = function (context, senzory) {
+			return new Chart(context, {
+				type: 'line',
+				data: {
+					datasets: createDatasets(senzory)
+				},
+				options: {
+					scales: {
+						xAxes: [
+							{
+								type: 'time'
+							}
+						]
+					}
+				}
+			});
+		};
+
+		var createDatasets = function (senzory) {
+			var data = [];
+			for (var k in senzory) {
+				if (senzory.hasOwnProperty(k)) {
+					for (var s in senzory[k]) {
+						if (senzory[k].hasOwnProperty(s)) {
+							data.push(createDataset(senzory[k][s]));
+						}
+					}
+				}
+			}
+			return data;
+		};
+
+		var createDataset = function (senzor) {
+			return {
+				label: senzor.senzor + ' (' + senzor.zarizeni + (senzor.historicke ? ', ' + senzor.stanoviste : '') + ')',
+				data: senzor.hodnoty.map(function (hodnota) {
+					return {
+						x: new Date(hodnota[0]),
+						y: hodnota[1]
+					};
+				}),
+				borderColor: '#' + senzor.barva,
+				backgroundColor: '#' + senzor.barva,
+				borderDash: senzor.historicke ? [10, 10] : [],
+				fill: false
+			};
+		};
+
+		var refreshCharts = function () {
+			const url = {link Data:mereni, $vcelstvo->id};
+			const arguments = {
+				pocatek: inputPocatek.val(),
+				konec: inputKonec.val()
+			};
+			showSpinner();
+			$.getJSON(url, arguments)
+					.done(function (data) {
+						deleteCharts(data);
+						updateCharts(data);
+					})
+					.fail(function () {
+						showError();
+					})
+					.always(function () {
+						hideSpinner();
+					});
+		};
+
+		$('#refresh').on('click', function () {
+			refreshCharts();
+		});
+
+		refreshCharts();
+	});
+</script>
+{/block}

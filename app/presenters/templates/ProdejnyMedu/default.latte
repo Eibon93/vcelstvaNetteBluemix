@@ -1,0 +1,57 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Moje prodeje medu v regionu</h1>
+
+{if count($prodejnyMedu) > 0}
+	<div class="row">
+		<div class="col-md-6">
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Otevírací doba a druh medu</th>
+						<th>Adresa</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr n:foreach="$prodejnyMedu as $p">
+						<td>
+							<strong n:if="$p->nazev">{$p->nazev}:</strong><br>
+							{$p->informace}
+						</td>
+						<td>
+							{$p->adresa->ulice}<br>
+							{$p->adresa->psc} {$p->adresa->castObce}
+						</td>
+						<td>
+							<a n:href="edit, $p->id" class="glyphicon glyphicon-pencil" title="Upravit prodejnu medu"></a>
+							<a n:href="delete, $p->id" data-confirm="Opravdu chcete smazat prodejní místo medu na adrese: {$p->adresa->ulice.', '.$p->adresa->castObce.', '.$p->adresa->psc}?" class="glyphicon glyphicon-trash" title="Odstranit prodejní místo medu"></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<hr>
+			<p>
+				<a n:href="add" class="btn btn-primary">Přidat místo prodeje medu</a>
+			</p>
+		</div>
+		<div class="col-md-6">
+			<div class="map-wrapper">
+				<div id="map" style="height: 500px;"></div>
+			</div>
+		</div>
+	</div>
+{else}
+	<div class="alert alert-warning">Zatím nemáte zadané žádné prodejní místa medu.</div>
+	<hr>
+	<p>
+		<a n:href="add" class="btn btn-primary">Přidat místo prodeje medu</a>
+	</p>
+{/if}
+
+{/block}
+
+{block scripts}
+{include parent}
+{include js/map.js.latte}
+{/block}

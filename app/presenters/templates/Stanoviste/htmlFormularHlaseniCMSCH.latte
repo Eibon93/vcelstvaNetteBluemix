@@ -1,0 +1,156 @@
+{block content}
+
+<style type="text/css">
+	table    {
+		border: 2px solid black;
+		width: 100%;
+		border-collapse: collapse;
+	}
+	table.stanoviste {
+		border-collapse: collapse;
+	}
+	table.stanoviste td {
+		border-right: 1px solid black;
+		border-bottom: 1px solid black;
+		padding: 3px 3px 3px 3px;
+	}
+	p,td {
+		font-size: 14px;
+		vertical-align: bottom;
+	}
+	b {
+		font-size: 12px;
+	}
+</style>
+
+<h1>Hlášení počtu včelstev a umístění stanovišť</h1>
+
+<h3 style="text-align: center;">k 1. září kalendářního roku {date('Y')}.</h3>
+
+<h3>1. Údaje o chovateli</h3>
+
+<table>
+    <tr>
+		<td>Registrační číslo</td>
+		<td colspan="3"> {if $uzivatel->vcelar->registracniCislo} CZ {$uzivatel->vcelar->registracniCislo} {else} _____________ {/if}</td>
+    </tr>
+    <tr>
+		<td colspan="4" style="border-top: 1px solid black">
+			<b>Chovatel</b>
+		</td>
+    </tr>
+    {if strlen($uzivatel->vcelar->ico)>3}
+		<tr>
+			<td nowrap>Odpovědná osoba</td>
+			<td colspan="3"> {$uzivatel->jmeno} {$uzivatel->prijmeni} </td>
+		</tr>
+		<tr>
+			<td nowrap>Název organizace</td>
+			<td colspan="3"> {$uzivatel->vcelar->nazev} </td>
+		</tr>
+		<tr>
+			<td>IČO</td>
+			<td> {$uzivatel->vcelar->ico} </td>
+			<td>PSČ</td>
+			<td> {$uzivatel->vcelar->adresa->psc} </td>
+		</tr>
+    {else}
+		<tr>
+			<td nowrap>Jméno</td>
+			<td colspan="3"> {$uzivatel->jmeno} </td>
+		</tr>
+		<tr>
+			<td nowrap>Přijmení</td>
+			<td colspan="3"> {$uzivatel->prijmeni} </td>
+		</tr>
+		<tr>
+			<td>Rodné číslo</td>
+			<td> {if $uzivatel->vcelar->rodneCislo} {$uzivatel->vcelar->rodneCislo} {else} ___________ {/if}</td>
+			<td>PSČ</td>
+			<td> {$uzivatel->vcelar->adresa->psc} </td>
+		</tr>
+    {/if}
+    <tr>
+		<td colspan="4" style="border-top: 1px solid black">
+			<b>{if strlen($uzivatel->vcelar->ico)>3} Sídlo organizace {else} Trvalé bydliště {/if}</b>
+		</td>
+    </tr>
+    <tr>
+		<td nowrap>Ulice a č.p./č.or.</td>
+		<td colspan="3"> {$uzivatel->vcelar->adresa->ulice} </td>
+    </tr>
+    {if !$uzivatel->vcelar->adresa->obec}
+		<tr>
+			<td>Obec</td>
+			<td colspan="3"> {$uzivatel->vcelar->adresa->castObce} </td>
+		</tr>
+    {else}
+		<tr>
+			<td>Obec</td>
+			<td> {$uzivatel->vcelar->adresa->obec->nazev} </td>
+			<td>Část obce</td>
+			<td> {$uzivatel->vcelar->adresa->castObce} </td>
+		</tr>
+		<tr>
+			<td>Okres</td>
+			<td> {$uzivatel->vcelar->adresa->obec->okres->nazev} </td>
+			<td>Kraj</td>
+			<td> {$uzivatel->vcelar->adresa->obec->okres->kraj->nazev} </td>
+		</tr>
+    {/if}
+    <tr>
+		<td colspan="4" style="border-top: 1px solid black">
+			<b>Kontaktní údaje</b>
+		</td>
+    </tr>
+    <tr>
+		<td>Telefon</td>
+		<td colspan="3"> {$uzivatel->telefon} </td>
+    </tr>
+    <tr>
+		<td>E-mail</td>
+		<td colspan="3"> {$uzivatel->email} </td>
+    </tr>
+</table>
+
+<h3>2. Počet včelstev a umístění stanovišť</h3>
+
+<table class="stanoviste">
+    <tr>
+		<td rowspan="3"></td>
+		<td colspan="5"><b>Umístění jednotlivých stanovišť včelstev</b></td>
+		<td rowspan="3"><b>Počet včelstev</b></td>
+    </tr>
+    <tr>
+		<td rowspan="2"><b>Číselný kód<br>katastrálního území</b></td>
+		<td colspan="2"><b>Parcelní číslo</b></td>
+		<td rowspan="2"><b>Typ parcely*</b></td>
+		<td rowspan="2"><b>Obec umístění včelstev</b></td>
+    </tr>
+    <tr>
+		<td><b>kmenové</b></td>
+		<td><b>poddělení</b></td>
+    </tr>
+    {var $poradi = 1}
+    {var $celkemVcelstev = 0}
+    <tr n:foreach="$vsechnyStanoviste as $stanoviste">
+		<td> {$poradi}. </td>
+		<td> {$stanoviste->katastralniUzemi->id} </td>
+		<td> {$stanoviste->parcela->cislo} </td>
+		<td> {$stanoviste->parcela->podcislo} </td>
+		<td> {$stanoviste->parcela->druh} </td>
+		<td> {$stanoviste->katastralniUzemi->obec->nazev} </td>
+		<td> {$stanoviste->aktualniVcelstva->countStored()} </td>
+		{php $poradi = $poradi + 1}
+		{php $celkemVcelstev = $celkemVcelstev + $stanoviste->aktualniVcelstva->countStored()}
+    </tr>
+    <tr>
+		<td colspan="6">Celkem včelstev</td>
+		<td> {$celkemVcelstev} </td>
+    </tr>
+</table>
+
+<p>* Typ parcely: P = pozemková, S = stavební</p>
+
+<br><br>
+<p>V&nbsp;.....................................&nbsp;&nbsp;Dne:&nbsp;..................................&nbsp;&nbsp;Podpis:&nbsp;.....................................................</p>

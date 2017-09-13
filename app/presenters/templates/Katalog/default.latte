@@ -1,0 +1,19 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Katalog úlových vah</h1>
+
+<div class="row" n:foreach="$typyZarizeni as $t">
+	<div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
+		<div class="thumbnail">
+			<img src="{$basePath}/img/zarizeni/zarizeni-{$t->id}.jpg" alt="Fotografie zařízení {$t->nazev}">
+		</div>
+	</div>
+	<div class="col-lg-8 col-md-6 col-sm-6 col-xs-12">
+		<div class="caption">
+			<h3 class="typ-zarizeni-nazev">{$t->nazev}</h3>
+			<p class="typ-zarizeni-vyrobce">{$t->vyrobce}</p>
+			<p class="typ-zarizeni-popis">{$t->popis|noescape}</p>
+			<p><a n:href="Zarizeni:vytvoritZarizeni, $t->id" class="btn btn-primary" role="button">Přidat toto zařízení</a></p>
+		</div>
+	</div>
+</div>

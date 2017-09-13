@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>API Tester</title>
+		<meta charset="UTF-8">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	</head>
+	<body>
+		<div class="container">
+			<h1>API Test</h1>
+			<hr>
+			<div class="row">
+				<div class="col-md-6">
+					<h2>Data</h2>
+					<form id="tester">
+						<div class="form-group">
+							<label for="device">Device ID</label>
+							<input type="text" name="device" id="device" class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="token">Token</label>
+							<input type="text" name="token" id="token" class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="time">Time</label>
+							<div class="input-group">
+								<input type="text" name="time" id="time" class="form-control">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button" id="now">Now</button>
+								</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="data">Data</label>
+							<input type="text" name="data" id="data" class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="seqNumber">Sequence number</label>
+							<input type="text" name="seqNumber" id="seqNumber" class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="snr">SNR</label>
+							<input type="text" name="snr" id="snr" class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="avgSnr">Average SNR</label>
+							<input type="text" name="avgSnr" id="avgSnr" class="form-control">
+						</div>
+						<button type="submit" class="btn btn-primary">Send</button>
+					</form>
+				</div>
+				<div class="col-md-6">
+					<h2>Result</h2>
+					<pre id="result" class="hidden"></pre>
+				</div>
+			</div>
+		</div>
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<script>
+			if (!Date.prototype.toUnix) {
+				(function () {
+					Date.prototype.toUnix = function () {
+						return Math.floor(this.getTime() / 1000);
+					};
+
+				}());
+			}
+		</script>
+		<script>
+			$().ready(function () {
+				const url = window.location.hostname !== 'localhost' ?
+						window.location.protocol + '//' + window.location.host + '/callback/sigfox' :
+						window.location.protocol + '//' + window.location.host + '/vcelstva.czu.cz/callback/sigfox';
+
+				$('#device').val('ff00ff00');
+				$('#time').val(new Date().toUnix());
+				$('#now').on('click', function () {
+					$('#time').val(new Date().toUnix());
+				});
+				$('#seqNumber').val(1);
+				$('#tester').on('submit', function () {
+					const data = $(this).serializeArray().reduce(function (result, item) {
+						if (item.name !== 'token' && item.value) {
+							result[item.name] = item.value;
+						}
+						return result;
+					}, {});
+					const headers = $(this).serializeArray().reduce(function (result, item) {
+						if (item.name === 'token' && item.value) {
+							result['Authorization'] = 'Basic ' + window.btoa(item.value);
+						}
+						return result;
+					}, {});
+
+					$.post({
+						url: url,
+						data: JSON.stringify(data),
+						contentType: 'application/json; charset=UTF-8',
+						headers: headers
+					}).done(function (data) {
+						$('#result').text(new Date().toLocaleString() + ':\n\n' + JSON.stringify(data, null, 2));
+						$('#seqNumber').val(parseInt($('#seqNumber').val()) + 1);
+					}).fail(function (xhr) {
+						$('#result').text(new Date().toLocaleString() + ':\n\n' + 'Error: ' + xhr.status + '\n\n' + xhr.responseText);
+					}).always(function () {
+						$('#result').removeClass('hidden');
+					});
+
+					return false;
+				});
+			});
+		</script>
+	</body>
+</html>

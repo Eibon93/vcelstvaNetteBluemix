@@ -1,0 +1,104 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Moje stanoviště se včelami</h1>
+
+{if count($stanoviste) > 0}
+	<div class="row">
+		<div class="col-md-6">
+			<div class="toolbar">
+				<a n:href="add" class="btn btn-primary">Přidat stanoviště včel</a>
+				{if $maVcelstva}
+					<a n:href="htmlFormularHlaseniObec" class="btn btn-success" target="_blank">Hlášení pro OBEC</a>
+					<a n:href="htmlFormularHlaseniCMSCH" class="btn btn-success" target="_blank">Hlášení pro Hradišťko</a>
+				{/if}
+			</div>
+			<hr>
+			<table class="table">
+				<thead>
+					<tr>
+						<th>Název</th>
+						<th>Reg. číslo</th>
+						<th>Kat. území a obec</th>
+						<th>Včelstva</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr n:foreach="$stanoviste as $s" data-href="{link Stanoviste:detail,$s->id}">
+						<td>
+							{$s->nazev}
+						</td>
+						<td>
+							{$s->registracniCislo}
+						</td>
+						<td>
+							{$s->katastralniUzemi->obec->nazev.', '.$s->katastralniUzemi->nazev|truncate:22}
+						</td>
+						<td>
+							<span class="badge">{$s->aktualniVcelstva->countStored()}</span>
+						</td>
+						<td>
+							<a n:href="detail,$s->id" class="glyphicon glyphicon-search" title="Detail stanoviště"></a>
+							&nbsp;
+							<a n:href="Vcelstva:add,$s->id" class="glyphicon glyphicon-plus" title="Přidat včelstvo"></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			{if $maVcelstva}
+				<h2>Aktuální včelstva</h2>
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Stanoviště</th>
+							<th>Včelstvo</th>
+							<th>Matka </th>
+							<th>Barva</th>
+							<th></th>
+						</tr>
+					</thead>
+					{foreach $stanoviste as $s}
+						<tbody n:foreach="$s->aktualniVcelstva->orderBy('this->vcelstvo->poradoveCislo') as $u">
+							<tr>
+								<td> {$u->stanoviste->nazev} </td>
+								<td> {$u->vcelstvo->poradoveCislo} </td>
+								<td> {$u->vcelstvo->cisloMatky}</td>
+								<td> {$u->vcelstvo->barvaMatky}</td>
+								<td>
+									<a n:href="Vcelstva:detail, $u->vcelstvo->id" class="glyphicon glyphicon-pencil" title="Upravit včelstvo a zapsat kontrolu"></a>
+									&nbsp;
+									<a n:href="Vcelstva:move, $u->vcelstvo->id" class="glyphicon glyphicon-share-alt" title="Přesunout včelstvo na jiné stanoviště"></a>
+								</td>
+							</tr>
+						</tbody>
+					{/foreach}
+				</table>
+			{else}
+				<div class="alert alert-warning">
+					Na stanovištích zatím není umístěno žádné včelstvo.<br>
+					Jakmile si založíte včelstva na svých stanovištích, budete moci si tisknout povinné formuláře pro obce a ČMSCH v Hradišťku.
+				</div>
+			{/if}
+		</div>
+		<div class="col-md-6">
+			<div class="map-wrapper">
+				<div id="map" style="height: 500px;"></div>
+			</div>
+		</div>
+	</div>
+{else}
+	<div class="alert alert-warning">
+		Zatím jste si nevytvořili žádné stanoviště se včelami.
+	</div>
+	<hr>
+	<p>
+		<a n:href="add" class="btn btn-primary">Přidat nové stanoviště se včelími úly</a>
+	</p>
+{/if}
+
+{/block}
+
+{block scripts}
+{include parent}
+{include js/map.js.latte}
+{/block}

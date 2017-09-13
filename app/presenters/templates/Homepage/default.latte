@@ -1,0 +1,36 @@
+{block content}
+
+<div class="blockquote">
+    {if !$user->isInRole('vcelar') && !$user->isInRole('zemedelec')}
+		<p class="text-primary" style="margin: 5px 2px 5px 2px;">
+			Portál pro individuální evidenci včel a postřiků / Moderní technologie pomáhají včelařům. / <font style="color: black;">Včelí úly v mapě ČR vidí pouze jejich vlastníci - stanoviště včel jsou neveřejné.</font>
+		</p>
+    {else}
+		<div class="btn">
+			{if $user->isInRole('vcelar')}
+				<a n:href="ProdejnyMedu:add" class="btn btn-primary">Přidat prodej medu</a>
+				<a n:href="Stanoviste:add" class="btn btn-primary">Přidat stanoviště včel</a>
+				<span style="margin: 5px 2px 5px 20px; color: black;">
+					V mapě najdete své stanoviště se včelími úly, a dále všechny prodeje medu a postřiky od ostatních uživatelů.
+				</span>
+			{/if}
+			{if $user->isInRole('zemedelec')}
+				<a n:href="Postrik:add" class="btn btn-primary">Přidat záznam o postřiku</a>
+				<span style="margin: 5px 2px 5px 20px; color: black;">
+					V mapě najdete všechny prodejní místa medu a plánované postřiky od ostatních uživatelů. Stanoviště se včelími úly vidí jen jejich majitelé.
+				</span>
+			{/if}
+		</div>
+    {/if}
+</div>
+
+<div class="map-wrapper">
+	<div id="map"></div>
+</div>
+
+{/block}
+
+{block scripts}
+{include parent}
+{include js/map.js.latte}
+{/block}

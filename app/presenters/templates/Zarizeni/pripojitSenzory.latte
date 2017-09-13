@@ -1,0 +1,24 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Připojení úlové váhy <small>(krok 2 ze 2)</small></h1>
+
+<div class="alert alert-warning">
+	Prosím vyberte, ke kterému včelstvu jsou připojeny senzory váhy <strong>{$zarizeni->nazev}</strong> a která data se mají zaznamenávat.
+</div>
+
+{control pripojeniSenzoruForm}
+
+{/block}
+{block scripts}
+{include parent}
+<script>
+	$(function () {
+		$('select').on('change', function () {
+			$(this)
+					.closest('fieldset')
+					.find('input[type=checkbox]')
+					.prop('checked', $(this).val() ? true : false);
+		});
+	});
+</script>
+{/block}

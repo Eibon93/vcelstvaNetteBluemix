@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>API Tester</title>
+		<meta charset="UTF-8">
+		<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+	</head>
+	<body>
+		<div class="container">
+			<h1>API Test</h1>
+			<hr>
+			<div class="row">
+				<div class="col-md-6">
+					<h2>Data</h2>
+					<form id="tester">
+						<div class="form-group">
+							<label for="device">Device ID</label>
+							<input type="text" name="device" id="device" class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="token">Token</label>
+							<input type="text" name="token" id="token" class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="time">Time</label>
+							<div class="input-group">
+								<input type="text" name="time" id="time" class="form-control">
+								<span class="input-group-btn">
+									<button class="btn btn-default" type="button" id="now">Now</button>
+								</span>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="weight">Weight</label>
+							<input type="text" name="weight" id="weight" class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="inner_temp_1">Inner temperature 1</label>
+							<input type="text" name="inner_temp_1" id="inner_temp_1" class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="inner_temp_2">Inner temperature 2</label>
+							<input type="text" name="inner_temp_2" id="inner_temp_2" class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="outer_temp">Outer temperature</label>
+							<input type="text" name="outer_temp" id="outer_temp" class="form-control">
+						</div>
+						<div class="form-group">
+							<label for="humidity">Humidity</label>
+							<input type="text" name="humidity" id="humidity" class="form-control">
+						</div>
+						<button type="submit" class="btn btn-primary">Send</button>
+					</form>
+				</div>
+				<div class="col-md-6">
+					<h2>Result</h2>
+					<pre id="result" class="hidden"></pre>
+				</div>
+			</div>
+		</div>
+		<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+		<script>
+			if (!Date.prototype.toLocaleISOString) {
+				(function () {
+
+					function pad(number) {
+						if (number < 10) {
+							return '0' + number;
+						}
+						return number;
+					}
+
+					function offset(minutes) {
+						const h = Math.floor(minutes / 60);
+						const m = minutes % 60;
+						return (h > 0 ? '-' + pad(h) : '+' + pad(-h)) + pad(m);
+					}
+
+					Date.prototype.toLocaleISOString = function () {
+						return this.getFullYear() +
+								'-' + pad(this.getMonth() + 1) +
+								'-' + pad(this.getDate()) +
+								'T' + pad(this.getHours()) +
+								':' + pad(this.getMinutes()) +
+								':' + pad(this.getSeconds()) +
+								offset(this.getTimezoneOffset());
+					};
+
+				}());
+			}
+		</script>
+		<script>
+			$().ready(function () {
+				const url = window.location.hostname !== 'localhost' ?
+						window.location.protocol + '//' + window.location.host + '/callback/generic' :
+						window.location.protocol + '//' + window.location.host + '/vcelstva.czu.cz/callback/generic';
+
+				$('#device').val('test');
+				$('#time').val(new Date().toLocaleISOString());
+				$('#now').on('click', function () {
+					$('#time').val(new Date().toLocaleISOString());
+				});
+				$('#tester').on('submit', function () {
+					const data = $(this).serializeArray().reduce(function (result, item) {
+						if (item.name !== 'token' && item.value) {
+							result[item.name] = item.value;
+						}
+						return result;
+					}, {});
+					const headers = $(this).serializeArray().reduce(function (result, item) {
+						if (item.name === 'token' && item.value) {
+							result['Authorization'] = 'Basic ' + window.btoa(item.value);
+						}
+						return result;
+					}, {});
+
+					$.post({
+						url: url,
+						data: JSON.stringify(data),
+						contentType: 'application/json; charset=UTF-8',
+						headers: headers
+					}).done(function (data) {
+						$('#result').text(new Date().toLocaleString() + ':\n\n' + JSON.stringify(data, null, 2));
+					}).fail(function (xhr) {
+						$('#result').text(new Date().toLocaleString() + ':\n\n' + 'Error: ' + xhr.status + '\n\n' + xhr.responseText);
+					}).always(function () {
+						$('#result').removeClass('hidden');
+					});
+
+					return false;
+				});
+			});
+		</script>
+	</body>
+</html>

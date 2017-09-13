@@ -1,0 +1,24 @@
+<script type="text/javascript" src="https://api.mapy.cz/loader.js"></script>
+<script type="text/javascript">Loader.load();</script>
+<script>
+	$(function () {
+		$('#map').createMap()
+				.setEditable({
+					type: 'stanoviste',
+					title: 'Místo stanoviště včel',
+					lat: $('#lat'),
+					lng: $('#lng'),
+					text: $('#souradnice')
+				})
+				.setQueryable({
+					url: {link Geo:query},
+					katastralniUzemiId: $('#katastralniUzemiId'),
+					parcelaId: $('#parcelaId'),
+					pudniBlokId: $('#pudniBlokId'),
+					katastralniUzemi: $('#katastralniUzemi'),
+					parcela: $('#parcela'),
+					pudniBlok: $('#pudniBlok')
+				})
+				.show();
+	});
+</script>

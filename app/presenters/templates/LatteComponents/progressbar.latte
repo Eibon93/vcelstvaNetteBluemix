@@ -1,0 +1,23 @@
+<div class="modal fade" id="progressBar" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-body">
+				<p><img src="{$basePath}/img/ajax-loader.gif" alt=""> Načítám data z LPISu, prosím čekejte&hellip;</p>
+			</div>
+		</div>
+	</div>
+</div>
+<script>
+	var ProgressBarUI = {
+		show: function () {
+			$('#progressBar').modal({
+				backdrop: 'static',
+				keyboard: false,
+				show: true
+			});
+		},
+		hide: function () {
+			$('#progressBar').modal('hide');
+		}
+	};
+</script>

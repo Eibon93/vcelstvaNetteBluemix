@@ -1,0 +1,48 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Editace profilu včelaře</h1>
+
+<div class="row">
+    <div class="col-md-8 col-md-offset-2">
+		{control vcelarForm}
+    </div>
+</div>
+
+{/block}
+
+{block scripts}
+{include parent}
+<script>
+	$(document).ready(function () {
+		var switchFyzicka = $('input[name="pravnickaFyzicka"][value="f"]');
+		var switchPravnicka = $('input[name="pravnickaFyzicka"][value="p"]');
+
+		var groupFyzicka = $('#group-fyzicka');
+		var groupPravnicka = $('#group-pravnicka');
+
+		var updateControls = function (duration) {
+			if (!switchFyzicka.is(':checked')) {
+				groupFyzicka.hide();
+			}
+			if (!switchPravnicka.is(':checked')) {
+				groupPravnicka.hide();
+			}
+			if (switchFyzicka.is(':checked')) {
+				groupFyzicka.fadeIn(duration);
+			}
+			if (switchPravnicka.is(':checked')) {
+				groupPravnicka.fadeIn(duration);
+			}
+		};
+
+		switchFyzicka.on('click', function () {
+			updateControls(200);
+		});
+		switchPravnicka.on('click', function () {
+			updateControls(200);
+		});
+
+		updateControls(0);
+	});
+</script>
+{/block}

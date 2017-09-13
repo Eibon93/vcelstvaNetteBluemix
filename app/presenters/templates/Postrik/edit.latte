@@ -1,0 +1,27 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Editace záznamu o postřiku</h1>
+
+<div class="row">
+	<div class="col-md-6">
+		<fieldset>
+			<legend>Údaje o plánovaném postřiku</legend>
+			{control postrikForm}
+		</fieldset>
+	</div>
+	<div class="col-md-6">
+		<fieldset>
+			<legend>Místo postřiku na území ČR</legend>
+			<div class="map-wrapper">
+				<div id="map" style="height: 500px;"></div>
+			</div>
+		</fieldset>
+	</div>
+</div>
+
+{/block}
+
+{block scripts}
+{include parent}
+{include js/marker.js.latte}
+{/block}

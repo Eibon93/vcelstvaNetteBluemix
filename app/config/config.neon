@@ -1,0 +1,87 @@
+# WARNING: it is CRITICAL that this file & directory are NOT accessible directly via a web browser!
+# https://nette.org/security-warning
+extensions:
+	dbal: Nextras\Dbal\Bridges\NetteDI\DbalExtension
+	orm: Nextras\Orm\Bridges\NetteDI\OrmExtension
+	nextras.form: Nextras\Forms\Bridges\NetteDI\FormsExtension
+	customControls: App\Controls\CustomControlsExtension
+
+parameters:
+
+
+php:
+	date.timezone: Europe/Prague
+
+
+application:
+	errorPresenter: Error
+	mapping:
+		*: App\*Module\Presenters\*Presenter
+
+
+session:
+	expiration: 14 days
+
+
+orm:
+	model: App\Model\Model
+
+
+services:
+	authenticator: App\Security\Authenticator
+	authorizator: App\Security\AuthorizatorFactory::create()
+	router: App\RouterFactory::createRouter
+	linkFactory: Nextras\Application\LinkFactory
+
+	# Služby pro tvorbu a odesílání e-mailových zpráv
+	- App\Model\MessageFactory
+	- App\Model\MessageSender(..., ..., "jakub.simunek@centrum.cz", "neco")
+
+	# Dependency injection pro managery
+	- App\Model\User
+
+	# Služby pro správu dat
+	- App\Managers\UserManager
+	- App\Managers\RegistrationManager
+	- App\Managers\ProdejnaMeduManager
+	- App\Managers\StanovisteManager
+	- App\Managers\PostrikManager
+	- App\Managers\VcelstvaManager
+	- App\Managers\VcelarManager
+	- App\Managers\ZemedelecManager
+	- App\Managers\OhrozeniManager
+	- App\Managers\KontrolaManager
+	- App\Managers\MereniManager
+	- App\Managers\ZarizeniManager
+
+	# Továrny na formuláře
+	- App\Forms\EmailChangeFormFactory
+	- App\Forms\LoginFormFactory
+	- App\Forms\PasswordChangeFormFactory
+	- App\Forms\PasswordResetFormFactory
+	- App\Forms\PasswordSendFormFactory
+	- App\Forms\ProfileChangeFormFactory
+	- App\Forms\VcelarRegistrationFormFactory
+	- App\Forms\ZemedelecRegistrationFormFactory
+	- App\Forms\ProdejnaMeduFormFactory
+	- App\Forms\StanovisteFormFactory
+	- App\Forms\PostrikFormFactory
+	- App\Forms\VcelstvoFormFactory
+	- App\Forms\KontrolaFormFactory
+	- App\Forms\EditVcelarFormFactory
+	- App\Forms\EditZemedelecFormFactory
+	- App\Forms\EmailFormFactory
+	- App\Forms\VytvoreniZarizeniFormFactory
+	- App\Forms\PripojeniZarizeniFormFactory
+	- App\Forms\PripojeniSenzoruFormFactory
+	- App\Forms\OdpojeniZarizeniFormFactory
+	- App\Forms\PresunVcelstvaFormFactory
+
+	# Služby pro získávání dat z jiných zdrojů
+	- App\Client\GeoClient(..., null)
+	- App\Client\DistanceClient
+
+	# Služby pro příjem naměřených dat
+	- App\Api\GenericAdapter
+	- App\Api\SigfoxAdapter
+	- App\Api\DecoderFactory

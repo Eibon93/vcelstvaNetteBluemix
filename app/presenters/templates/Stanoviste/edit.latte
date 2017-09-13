@@ -1,0 +1,27 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Úprava stanoviště včel</h1>
+
+<div class="row">
+	<div class="col-md-6">
+		<fieldset>
+			<legend>Údaje o stanovišti</legend>
+			{control stanovisteForm}
+		</fieldset>
+	</div>
+	<div class="col-md-6" style="margin-bottom: 30px;">
+		<fieldset>
+			<legend>Pozice stanoviště včel na území ČR</legend>
+			<div class="map-wrapper">
+				<div id="map" style="height: 500px;"></div>
+			</div>
+		</fieldset>
+	</div>
+</div>
+
+{/block}
+
+{block scripts}
+{include parent}
+{include js/marker.js.latte}
+{/block}

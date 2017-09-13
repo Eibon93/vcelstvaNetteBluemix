@@ -1,0 +1,101 @@
+{block content}
+
+<h1 n:block="title"><img src="{$basePath}/img/nadpis_h1.png" style="margin-top: -5px;">&nbsp;Registrace zemědělce <small>nebo organizace provádějící postřiky</small></h1>
+
+
+<div class="row with-margin">
+    <div class="col-md-8 col-md-offset-2">
+
+	{form zemedelecRegistrationForm class => 'form-horizontal'}
+
+
+	    <fieldset>
+		<legend>Registrační údaje</legend>
+		{include ../LatteComponents/form-group.latte,control=>$form['email']}
+		{include ../LatteComponents/form-group.latte,control=>$form['heslo']}
+		{include ../LatteComponents/form-group.latte,control=>$form['hesloTest']}
+
+	    </fieldset>
+
+	    <fieldset>
+		<legend>Odpovědná osoba</legend>
+
+		{include ../LatteComponents/form-group.latte,control=>$form['jmeno']}
+		{include ../LatteComponents/form-group.latte,control=>$form['prijmeni']}
+		{include ../LatteComponents/form-group.latte,control=>$form['telefon']}
+		{include ../LatteComponents/form-group.latte,control=>$form['wwwStranky']}
+		<p style='text-align: right; margin-top: -10px; color: darkred;'>
+		    <small>WWW stránky se zobrazí u Vašich plánovaých postřiků v mapě ČR (nepovinný údaj).</small>
+		</p>
+
+	    </fieldset>
+
+	    <fieldset>
+		<legend>Organizace provádějící chemické postřiky</legend>
+		{include ../LatteComponents/form-group.latte,control=>$form['nazev']}
+		{include ../LatteComponents/form-group.latte,control=>$form['ico'] }
+		{include ../LatteComponents/form-group.latte,control=>$form['castObce'] }
+		{include ../LatteComponents/form-group.latte,control=>$form['ulice']}
+		{include ../LatteComponents/form-group.latte,control=>$form['psc'] }
+
+
+	    </fieldset>
+
+	    <fieldset>
+		<legend>Podmínky použití a zásady ochrany osobních údajů</legend>
+		{include podminky.latte }
+		{include ../LatteComponents/form-group.latte,control=>$form['souhlas']}
+
+	    </fieldset>
+	    <div class="form-group">
+		<div class="col-sm-9 col-sm-offset-3">
+		    {input send class => 'btn btn-primary'}
+		</div>
+	    </div>
+
+	{/form}
+    </div>
+
+</div>
+
+{/block}
+{block scripts}
+
+{include parent}
+<script src="{$basePath}/js/typeahead.bundle.min.js"></script>
+<script src="{$basePath}/js/bootstrap-datepicker.js"></script>
+
+<script>
+
+
+    $(document).ready(function () {
+	var source = new Bloodhound({
+	    datumTokenizer: Bloodhound.tokenizers.whitespace,
+	    queryTokenizer: Bloodhound.tokenizers.whitespace,
+	    remote: {
+		url: $('#frm-zemedelecRegistrationForm-obec').attr('data-typeahead-url'),
+		wildcard: '__QUERY_PLACEHOLDER__'
+	    }
+	});
+
+	$('#frm-zemedelecRegistrationForm-obec').typeahead(null, {
+	    name: 'castObce',
+	    source: source,
+	    templates: {
+		empty: [
+		    '<div class="empty-message">',
+		    'obec nenalezena',
+		    '</div>'
+		].join('\n'),
+		suggestion: function (data) {
+		    return '<p><strong>' + data + '</strong> </p>';
+		}
+	    }
+	});
+
+    });
+</script>
+
+
+{/block}
+

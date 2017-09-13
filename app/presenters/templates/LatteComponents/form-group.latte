@@ -1,0 +1,17 @@
+{default $required = $control->required}
+{default $divAttrs = array()}
+
+<div class="form-group" {foreach $divAttrs as $key => $attr}{$attr}{/foreach}>
+    {if $required }
+	{label $control class => 'control-label col-sm-3 required'/}
+    {else}
+	{label $control class => 'control-label col-sm-3 '/}
+    {/if}
+    <div class="col-sm-9">
+	
+	{input $control }
+	<div class="text-danger" n:ifcontent>{inputError $control}</div>
+	<div class="error text-danger no-show"></div>
+    </div>
+</div>
+

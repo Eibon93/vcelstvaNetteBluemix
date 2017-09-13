@@ -1,0 +1,15 @@
+{block content}
+
+<h1 n:block="title"><img src="{$basePath}/img/nadpis_h1.png" style="margin-top: -5px;">&nbsp;Přihlášení</h1>
+
+<div class="row with-margin">
+    <hr>
+	<div class="col-md-8 col-md-offset-1">
+		{control loginForm}
+		<div class="form-horizontal">
+			<div class="form-group">
+				<div class="col-sm-9 col-sm-offset-3"><a n:href="User:sendPassword">Zapoměl(a) jsem své heslo</a></div>
+			</div>
+		</div>
+	</div>
+</div>

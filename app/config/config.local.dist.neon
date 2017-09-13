@@ -1,0 +1,15 @@
+parameters:
+	mail:
+		from: "Jan Bartoška <bartoska@pef.czu.cz>"
+		debug: true
+
+dbal:
+	driver: 'mysqli'
+	host: 'sl-us-south-1-portal.6.dblayer.com:21506'
+	database: 'vcelstva'
+	username: 'admin'
+	password: 'JFINHSOUDMNSHEDY'
+	charset: 'utf8'
+	applicationTz: 'Europe/Prague'
+	connectionTz: 'Europe/Prague'
+	simpleStorageTz: 'Europe/Prague'

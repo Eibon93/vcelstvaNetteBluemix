@@ -1,0 +1,24 @@
+<script src="https://api.mapy.cz/loader.js"></script>
+<script>Loader.load();</script>
+<script>
+	$(function () {
+		$('#map').createMap()
+				.setEditable({
+					type: 'postrik_nebezpecny',
+					title: 'Místo plánovaného postřiku',
+					lat: $('#lat'),
+					lng: $('#lng'),
+					text: $('#souradnice')
+				})
+				.setQueryable({
+					url: {link Geo:query},
+					katastralniUzemiId: $('#katastralniUzemiId'),
+					parcelaId: $('#parcelaId'),
+					pudniBlokId: $('#pudniBlokId'),
+					katastralniUzemi: $('#katastralniUzemi'),
+					parcela: $('#parcela'),
+					pudniBlok: $('#pudniBlok')
+				})
+				.show();
+	});
+</script>

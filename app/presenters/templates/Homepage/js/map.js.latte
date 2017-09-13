@@ -1,0 +1,72 @@
+<script src="https://api.mapy.cz/loader.js"></script>
+<script>Loader.load();</script>
+<script>
+	$(document).ready(function () {
+	var prodejnyMedu = [];
+	{foreach $prodejnyMedu as $p}
+	prodejnyMedu.push({
+	id: {$p->id},
+			lat: {$p->lat},
+			lng: {$p->lng},
+			nazev: {$p->nazev},
+			informace: {$p->informace},
+			ulice: {$p->adresa->ulice},
+			obec: {$p->adresa->castObce},
+			psc: {$p->adresa->psc},
+			telefon: {$p->uverejnitTelefon ? $p->vcelar->admin->telefon : null},
+			web: {$p->vcelar->getWwwStranky()}
+	});
+	{/foreach}
+
+	var postriky = [];
+	{foreach $postriky as $p}
+	postriky.push({
+	id: {$p->id},
+			lat: {$p->lat},
+			lng: {$p->lng},
+			datum: {$p->datum|date:'j.n.Y'},
+			cas: {$p->datum|date:'H:i'},
+			plodina: {$p->plodina},
+			nebezpecny: {$p->nebezpecny},
+			kvetouci: {$p->kvetouci},
+			mimoLetovouAktivitu: {$p->mimoLetovouAktivitu},
+			katastralniUzemi: {$p->katastralniUzemi->celyNazev},
+			wwwStranky: {$p->zemedelskyPodnik->getWwwStranky()},
+			telefon: {$p->uverejnitTelefon ? $p->zemedelskyPodnik->admin->telefon : null}
+	});
+	{/foreach}
+
+	var stanoviste = [];
+	{ifset $stanoviste}
+		{foreach $stanoviste as $s}
+	stanoviste.push({
+	id: {$s->id},
+			lat: {$s->lat},
+			lng: {$s->lng},
+			nazev: {$s->nazev},
+			pocetVcelstev: {$s->aktualniVcelstva->countStored()},
+			registracniCislo: {$s->registracniCislo},
+			parcela: {$s->parcela->celyNazev},
+			obec: {$s->katastralniUzemi->obec->nazev},
+			jeReferencni: {count($s->referencniVcelstva) > 0},
+			vcelstva: [
+			{foreach $s->referencniVcelstva as $u}
+			{
+			id: {$u->vcelstvo->id},
+					poradoveCislo: {$u->vcelstvo->poradoveCislo}
+			}
+				{sep},{/sep}
+			{/foreach}
+			]
+	});
+		{/foreach}
+	{/ifset}
+
+	$('#map').createMap()
+			.addProdejnyMedu(prodejnyMedu)
+			.addPostriky(postriky)
+			.addStanoviste(stanoviste)
+			.show();
+	});
+
+</script>

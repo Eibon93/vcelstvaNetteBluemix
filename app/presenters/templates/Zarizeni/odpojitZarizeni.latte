@@ -1,0 +1,12 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Odpojení úlové váhy</h1>
+
+{form odpojeniZarizeniForm}
+	<div class="alert alert-warning">
+		<p class="text-center">Opravdu chcete odstranit úlovou váhu <strong>{$zarizeni->nazev}</strong> ze stanoviste <strong>{$zarizeni->aktualniStanoviste->nazev}</strong>?</p>
+	</div>
+	<p class="text-center">
+		<input n:name="send" class="btn btn-danger btn-large">
+	</p>
+{/form}

@@ -1,0 +1,99 @@
+{block content}
+
+<style type="text/css">
+    table {
+		margin-bottom: 40px;
+		width: 100%;
+    }
+    table.stanoviste {
+		border: 2px solid black;
+		border-collapse: collapse;
+    }
+    table.stanoviste td {
+		border-right: 1px solid black;
+		border-bottom: 1px solid black;
+		padding: 3px 3px 3px 3px;
+    }
+</style>
+
+{var $pocetStran = 1}
+<div n:foreach='$vsechnyStanovistePodleObci as $obecId => $seznamStanovist'>
+
+    <div{if count($vsechnyStanovistePodleObci) > ($pocetStran)} style="page-break-after: always"{/if}>
+
+		<h1 style="text-align: center;">Oznámení stanoviště včelstev</h1>
+
+		<p style="text-align: center; font-size: 10px; margin-bottom: 40px;">
+			podle §  51 odst. 3 zákona č. 326/2004 Sb., o rostlinolékařské péči v platném znění a § 7 a 8 vyhlášky č. 327/2012 Sb.,
+			<br>o ochraně včel, zvěře, vodních organizmů a dalších necílových organizmů při použití přípravků na ochranu rostlin:
+		</p>
+
+		<table>
+			{if strlen($uzivatel->vcelar->ico)>3}
+				<tr>
+					<td nowrap><b>Chovatel (právnická osoba):</b></td>
+					<td> {$uzivatel->vcelar->nazev}, IČO {$uzivatel->vcelar->ico} </td>
+				</tr>
+				<tr>
+					<td><b>sídlo:</b></td>
+					<td> {$uzivatel->vcelar->adresa->ulice}, {$uzivatel->vcelar->adresa->castObce}, {$uzivatel->vcelar->adresa->psc} </td>
+				</tr>
+			{else}
+				<tr>
+					<td nowrap><b>Chovatel (fyzická osoba):</b></td>
+					<td> {$uzivatel->jmeno} {$uzivatel->prijmeni}, r.č. {$uzivatel->vcelar->rodneCislo} </td>
+				</tr>
+				<tr>
+					<td><b>bydliště:</b></td>
+					<td> {$uzivatel->vcelar->adresa->ulice}, {$uzivatel->vcelar->adresa->castObce}, {$uzivatel->vcelar->adresa->psc} </td>
+				</tr>
+			{/if}
+			<tr>
+				<td><b><small>Jméno a příjmení, číslo telefonu, případně jiný kontakt fyzické osoby, která jedná jménem chovatele:</small></b></td>
+				<td nowrap><small> {$uzivatel->jmeno} {$uzivatel->prijmeni}, tel. {$uzivatel->telefon}, email: {$uzivatel->email} </small></td>
+			</tr>
+		</table>
+
+		<table class='stanoviste'>
+			<tr>
+				<td colspan="4"><b>Oznamuji, že mám včelstva umístěna na stanovišti:</b></td>
+			</tr>
+			<tr>
+				<td><b>č. parcely</b></td>
+				<td><b>kat. území</b></td>
+				<td><b>obec</b></td>
+				<td><b>Umístěno do*</b></td>
+			</tr>
+			<tr n:foreach="$seznamStanovist as $stanoviste">
+				<td> {$stanoviste->parcela->celyNazev} </td>
+				<td> {$stanoviste->katastralniUzemi->nazev} </td>
+				<td> {$stanoviste->katastralniUzemi->obec->nazev} </td>
+				<td>
+					{if $stanoviste->predpokladanyKonec}
+						{$stanoviste->predpokladanyKonec |date:'%d.%m.%Y'}
+					{else}
+						<i>neomezeno</i>
+					{/if}
+				</td>
+			</tr>
+			<tr>
+		</table>
+		<p>
+			<b>Přikládáme jednoduchý situační náčrtek s označením stanoviště.</b>
+			<br><small>* Předpokládaná doba umístění včelstev (je vyplněna jen v případě přechodných stanovišť).</small>
+		</p>
+		<br><br>
+		<p>V&nbsp;.....................................&nbsp;&nbsp;Dne:&nbsp;..................................&nbsp;&nbsp;Podpis:&nbsp;.....................................................</p>
+		<p>
+			<small>
+				<b>Další informace a pokyny:</b>
+				Jedná-li se o lesní pozemek, do fomuláře je nutné doplnit též jednotku prostorového rozdělení lesa.
+				Nové umístění stanovišť včelstev včetně kočovných se oznamuje alespoň pět dnů před jejich přemístěním.
+				Stanoviště včelstev, pokud není umístěno v zastavěné části obce, se označí umístěním žlutého rovnostranného trojúhelníku o délce strany 1 m v horizontální poloze.
+				Tento vzor je univerzální jak pro trvalá tak pro přechodná stanoviště. K oznámení je nutno přiložit jednoduchý plánek s označením stanoviště. Toto platí pro všechna stanoviště, nejen pro ta, která jsou umístěna mimo zastavěnou část obce.
+			</small>
+		</p>
+
+		{php $pocetStran = $pocetStran + 1}
+    </div>
+</div>

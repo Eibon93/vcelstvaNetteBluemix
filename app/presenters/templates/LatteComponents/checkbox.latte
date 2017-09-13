@@ -1,0 +1,16 @@
+{default $required = $control->required}
+{default $divAttrs = array()}
+
+<div class="form-group" {foreach $divAttrs as $key => $attr}{$attr}{/foreach}>
+    {if $required }
+	{label $control class => 'control-label col-sm-3 checkbox-inline required'/}
+    {else}
+	{label $control class => 'control-label col-sm-3 checkbox-inline'/}
+    {/if}
+    
+    <div class="col-sm-9 col-sm-offset-3">
+	{input $control class => 'form-control'}
+	<div class="text-danger" n:ifcontent>{inputError $control}</div>
+    </div>
+</div>
+

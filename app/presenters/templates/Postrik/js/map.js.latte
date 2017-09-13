@@ -1,0 +1,27 @@
+<script src="//api.mapy.cz/loader.js"></script>
+<script>Loader.load();</script>
+<script>
+	$(function () {
+		var postriky = [];
+	{foreach $postriky as $p}
+		postriky.push({
+			id: {$p->id},
+			lat: {$p->lat},
+			lng: {$p->lng},
+			datum: {$p->datum|date:'j.n.Y'},
+			cas: {$p->datum|date:'H:i'},
+			plodina: {$p->plodina},
+			nebezpecny: {$p->nebezpecny},
+			kvetouci: {$p->kvetouci},
+			mimoLetovouAktivitu: {$p->mimoLetovouAktivitu},
+			katastralniUzemi: {$p->katastralniUzemi->celyNazev},
+			wwwStranky: {$p->zemedelskyPodnik->getWwwStranky()},
+			telefon: {$p->uverejnitTelefon ? $p->zemedelskyPodnik->admin->telefon : null}
+		});
+	{/foreach}
+
+		$('#map').createMap()
+				.addPostriky(postriky)
+				.show();
+	});
+</script>

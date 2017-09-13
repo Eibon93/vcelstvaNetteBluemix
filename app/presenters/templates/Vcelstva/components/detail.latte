@@ -1,0 +1,93 @@
+<div class="row" n:if="$vcelstvo->jeReferencni && !$user->isAllowed($vcelstvo, 'edit')">
+	<div class="col-sm-10 col-sm-offset-1">
+		<h3>Referenční včelař: {$vcelstvo->vcelar->admin->jmeno} {$vcelstvo->vcelar->admin->prijmeni}</h3>
+		<p><a href="mailto:{$vcelstvo->vcelar->admin->email}">{$vcelstvo->vcelar->admin->email}</a></p>
+	</div>
+</div>
+<div class="row">
+    <div class="col-sm-10 col-md-offset-1">
+		<div class="toolbar" n:if="$user->isAllowed($vcelstvo, 'edit')">
+			<a n:href="Kontroly:add, $vcelstvo->id" class="btn btn-success">Přidat kontrolu</a>
+			<a n:href="edit, $vcelstvo->id" class="btn btn-primary">Upravit včelstvo</a>
+			<a n:href="Stanoviste:" class="btn btn-default">Zpět na seznam stanovišť</a>
+		</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>Číslo matky </th>
+					<th>Původ matky</th>
+					<th>Barva matky</th>
+					<th>Typ úlu</th>
+					<th>Rámková míra</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td> {$vcelstvo->cisloMatky}</td>
+					<td> {if strlen($vcelstvo->puvodMatky)>0} {$vcelstvo->puvodMatky} {else} <i>Není uvedeno</i>{/if}</td>
+					<td> {$vcelstvo->barvaMatky}</td>
+					<td> {$vcelstvo->typUlu}</td>
+					<td> {$vcelstvo->ramkovaMira}</td>
+				</tr>
+			</tbody>
+		</table>
+		{if $vcelstvo->aktualniUmisteni}
+			<table class="table table-responsive">
+				<thead>
+					<tr >
+						<th>Aktuální umístění od</th>
+						<th>Název stanoviště</th>
+						<th>Reg. číslo</th>
+						<th>Katastrální území a obec</th>
+						<th>Předpokládaný konec stanoviště</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td> {$vcelstvo->aktualniUmisteni->datumUmisteni|date:'j.n.Y'} </td>
+						<td> {$vcelstvo->aktualniUmisteni->stanoviste->nazev} </td>
+						<td> {$vcelstvo->aktualniUmisteni->stanoviste->registracniCislo} </td>
+						<td> {$vcelstvo->aktualniUmisteni->stanoviste->katastralniUzemi->obec->nazev}, {$vcelstvo->aktualniUmisteni->stanoviste->katastralniUzemi->nazev} </td>
+						<td> {if $vcelstvo->aktualniUmisteni->stanoviste->predpokladanyKonec} {$vcelstvo->aktualniUmisteni->stanoviste->predpokladanyKonec |date:'%d.%m.%Y'} {else} <i>Nebyl stanoven</i> {/if}</td>
+						<td n:if="$user->isAllowed($vcelstvo, 'edit')">
+							<a n:href="Stanoviste:detail, $vcelstvo->aktualniUmisteni->stanoviste->id" class="glyphicon glyphicon-search" title="Detail stanoviště"></a>
+							<a n:href="move, $vcelstvo->id" class="glyphicon glyphicon-share-alt" title="Změnit stanoviště"></a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		{else}
+			<label>Včelstvo není v současné chvíli nikde umístěno.</label>
+			<hr>
+		{/if}
+		<div class="toolbar" n:if="count($vcelstvo->historickaUmisteni) > 0">
+			<button data-switch="#historicka-umisteni" data-show="Zobrazit historická umístění" data-hide="Skrýt historická umístění" class="btn btn-default">Zobrazit historická umístění</button>
+		</div>
+    </div>
+</div>
+<div class="row" n:if="count($vcelstvo->historickaUmisteni) > 0">
+	<div class="col-sm-9 col-md-offset-2 hidden" style="background-color: whitesmoke;" id="historicka-umisteni">
+		<br>
+		<table class="table table-responsive">
+			<thead>
+				<tr >
+					<th>Historická umístění</th>
+					<th>Název stanoviště</th>
+					<th>Reg. číslo</th>
+					<th>Katastrální území a obec</th>
+					<th></th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr n:foreach="$vcelstvo->historickaUmisteni as $u">
+					<td> {$u->datumUmisteni|date:'j.n.Y'} - {$u->datumPresunu |date:'%d.%m.%Y'} </td>
+					<td> {$u->stanoviste->nazev} </td>
+					<td> {$u->stanoviste->registracniCislo} </td>
+					<td> {$u->stanoviste->katastralniUzemi->obec->nazev}, {$u->stanoviste->katastralniUzemi->nazev} </td>
+					<td n:if="$user->isAllowed($vcelstvo, 'edit')"> <a n:href="Stanoviste:detail, $u->stanoviste->id" class="glyphicon glyphicon-search" title="Detail stanoviště"></a></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>

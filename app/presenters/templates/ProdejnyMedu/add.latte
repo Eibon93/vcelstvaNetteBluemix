@@ -1,0 +1,27 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Přidání místa prodeje medu</h1>
+
+<div class="row">
+    <div class="col-md-6">
+		{include components/prodejna-form.latte}
+	</div>
+	<div class="col-md-6">
+		<fieldset>
+			<legend>Umístění prodeje medu v regionu</legend>
+			<div class="alert alert-info">
+				Kliknutím do mapy zadáte polohu prodejního místa.
+			</div>
+			<div class="map-wrapper">
+				<div id="map" style="height:500px;"></div>
+			</div>
+		</fieldset>
+	</div>
+</div>
+
+{/block}
+
+{block scripts}
+{include parent}
+{include js/marker.js.latte}
+{/block}

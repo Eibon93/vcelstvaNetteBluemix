@@ -1,0 +1,25 @@
+<script src="//api.mapy.cz/loader.js"></script>
+<script>Loader.load();</script>
+<script>
+	$(function () {
+		var prodejnyMedu = [];
+	{foreach $prodejnyMedu as $p}
+		prodejnyMedu.push({
+			id: {$p->id},
+			lat: {$p->lat},
+			lng: {$p->lng},
+			nazev: {$p->nazev},
+			informace: {$p->informace},
+			ulice: {$p->adresa->ulice},
+			obec: {$p->adresa->castObce},
+			psc: {$p->adresa->psc},
+			telefon: {$p->uverejnitTelefon ? $p->vcelar->admin->telefon : null},
+			web: {$p->vcelar->getWwwStranky()}
+		});
+	{/foreach}
+
+		$('#map').createMap()
+				.addProdejnyMedu(prodejnyMedu)
+				.show();
+	});
+</script>

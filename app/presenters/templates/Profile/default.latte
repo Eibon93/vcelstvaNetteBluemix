@@ -1,0 +1,84 @@
+{block content}
+
+<h1 n:block="title" class="page-title">Profil uživatele</h1>
+
+<div class="row">
+	<div class="col-md-8 col-md-offset-2">
+		<dl class="dl dl-horizontal">
+			<dt>Jméno</dt>
+			<dd>{$profile->jmeno} {$profile->prijmeni}</dd>
+			<dt>E-mailová adresa</dt>
+			<dd><a href="mailto:{$profile->email}">{$profile->email}</a></dd>
+			<dd>
+				<a n:href="editProfile" class="btn btn-default">Změnit jméno</a>
+				<a n:href="editEmail" class="btn btn-default">Změnit e-mail</a>
+				<a n:href="editPassword" class="btn btn-default">Změnit heslo</a>
+			</dd>
+		</dl>
+	</div>
+</div>
+
+<div n:if="$profile->vcelar" class="row">
+	<div class="col-md-8 col-md-offset-2">
+		<h2>Včelař</h2>
+		<dl class="dl dl-horizontal">
+			{if $profile->vcelar->ico}
+				<dt>Název</dt>
+				<dd>
+					{$profile->vcelar->nazev}
+				</dd>
+				<dt>IČO</dt>
+				<dd>
+					{$profile->vcelar->ico}
+				</dd>
+			{elseif $profile->vcelar->rodneCislo}
+				<dt>Rodné číslo</dt>
+				<dd>
+					{$profile->vcelar->rodneCislo}
+				</dd>
+			{/if}
+			{if $profile->vcelar->registracniCislo}
+				<dt>Registrační číslo</dt>
+				<dd>
+					{$profile->vcelar->registracniCislo}
+				</dd>
+			{/if}
+			<dt>Datum registrace na portál</dt>
+			<dd>
+				{$profile->vcelar->datumRegistrace|date:'j.n.Y'}
+			</dd>
+			<dt>Adresa</dt>
+			<dd>
+				{$profile->vcelar->adresa->ulice}<br>
+				{$profile->vcelar->adresa->psc} {$profile->vcelar->adresa->castObce}
+			</dd>
+			<dd>
+				<a n:href="editVcelar" class="btn btn-default" n:if="$user->isAllowed($profile->vcelar, 'edit')">Změnit profil včelaře</a>
+			</dd>
+		</dl>
+	</div>
+</div>
+
+<div n:if="$profile->zemedelskyPodnik" class="row">
+	<div class="col-md-8 col-md-offset-2">
+		<h2>Organizace provádějící postřiky</h2>
+		<dl class="dl dl-horizontal">
+			<dt>Název</dt>
+			<dd>
+				{$profile->zemedelskyPodnik->nazev}
+			</dd>
+			<dt>IČO</dt>
+			<dd>
+				{$profile->zemedelskyPodnik->ico}
+			</dd>
+			<dt>Adresa</dt>
+			<dd>
+				{$profile->zemedelskyPodnik->adresa->ulice}<br>
+				{$profile->zemedelskyPodnik->adresa->psc} {$profile->zemedelskyPodnik->adresa->castObce}
+			</dd>
+			<dd>
+				<a n:href="editZemedelskyPodnik" class="btn btn-default" n:if="$user->isAllowed($profile->zemedelskyPodnik, 'edit')">Změnit profil organizace</a>
+			</dd>
+		</dl>
+	</div>
+</div>

@@ -1,0 +1,22 @@
+<script src="//api.mapy.cz/loader.js"></script>
+<script>Loader.load();</script>
+<script>
+	$(document).ready(function () {
+		var stanoviste = [];
+		stanoviste.push({
+			id: {$stanoviste->id},
+			lat: {$stanoviste->lat},
+			lng: {$stanoviste->lng},
+			nazev: {$stanoviste->nazev},
+			referencni: false,
+			pocetVcelstev: '' + {$stanoviste->aktualniVcelstva->countStored()},
+			registracniCislo: {$stanoviste->registracniCislo},
+			parcelaCislo: '' + {$stanoviste->parcela->cislo . ($stanoviste->parcela->podcislo ? '/' . $stanoviste->parcela->podcislo : '')},
+			obec: {$stanoviste->katastralniUzemi->obec->nazev}
+		});
+
+		$('#map').createMap()
+				.addStanoviste(stanoviste)
+				.show();
+	});
+</script>
